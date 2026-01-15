@@ -20,7 +20,6 @@
 #include "TraceJavaAlloc.h"
 
 #include <memory>
-#include "../../utils/npth_dl.h"
 #include <shadowhook.h>
 #include <mutex>
 #include "java_alloc_common.h"
@@ -254,7 +253,7 @@ void registerAllocationListener() {
 }
 
 bool TraceJavaAlloc::init() {
-    std::shared_ptr<void> scope = std::shared_ptr<void>(npth_dlopen("libart.so"), npth_dlclose);
+    std::shared_ptr<void> scope = std::shared_ptr<void>(shadowhook_dlopen("libart.so"), shadowhook_dlclose);
     if (scope.get() == nullptr) {
         ALOGE("Cannot open libart.so");
         return false;
@@ -265,13 +264,13 @@ bool TraceJavaAlloc::init() {
         return false;
     }
 
-    SetAllocationListenerFunc = (SetPtr_) npth_dlsym(art_lib,
+    SetAllocationListenerFunc = (SetPtr_) shadowhook_dlsym(art_lib,
                                                             HEAP_SET_ALLOC_LISTENER);
     if(SetAllocationListenerFunc == nullptr) {
         ALOGE("Cannot find SetAllocationListener");
         return false;
     }
-    RemoveAllocationListenerFunc = (CallVoid_) npth_dlsym(art_lib,
+    RemoveAllocationListenerFunc = (CallVoid_) shadowhook_dlsym(art_lib,
                                                                  HEAP_REMOVE_ALLOC_LISTENER);
     if(RemoveAllocationListenerFunc == nullptr) {
         ALOGE("Cannot find RemoveAllocationListener");
@@ -279,11 +278,11 @@ bool TraceJavaAlloc::init() {
     }
 
     s_use_thread_ResetQuickAllocEntryPointsForThread_bool = false;
-    Thread_ResetQuickAllocEntryPointsForThreadFunc = npth_dlsym(art_lib,
+    Thread_ResetQuickAllocEntryPointsForThreadFunc = shadowhook_dlsym(art_lib,
                                                                        Thread_RESET_QUICK_ALLOC_ENTRY_POINTS_FOR_THREAD);
     if(Thread_ResetQuickAllocEntryPointsForThreadFunc == nullptr) {
         s_use_thread_ResetQuickAllocEntryPointsForThread_bool = true;
-        Thread_ResetQuickAllocEntryPointsForThreadFunc = npth_dlsym(art_lib,
+        Thread_ResetQuickAllocEntryPointsForThreadFunc = shadowhook_dlsym(art_lib,
                                                                            Thread_RESET_QUICK_ALLOC_ENTRY_POINTS_FOR_THREAD_BOOL);
     }
     if(Thread_ResetQuickAllocEntryPointsForThreadFunc == nullptr) {
@@ -291,7 +290,7 @@ bool TraceJavaAlloc::init() {
         return false;
     }
 
-    SetQuickAllocEntryPointsInstrumentedFunc = (SetQuickAllocEntryPointsInstrumented_) npth_dlsym(
+    SetQuickAllocEntryPointsInstrumentedFunc = (SetQuickAllocEntryPointsInstrumented_) shadowhook_dlsym(
             art_lib, SET_QUICK_ALLOC_ENTRY_POINTS_INSTRUMENTED);
     if(SetQuickAllocEntryPointsInstrumentedFunc == nullptr) {
         ALOGE("Cannot find SetQuickAllocEntryPointsInstrumented");
