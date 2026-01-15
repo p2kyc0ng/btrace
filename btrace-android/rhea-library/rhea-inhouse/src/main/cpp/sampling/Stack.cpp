@@ -16,7 +16,7 @@
 #include "Stack.h"
 
 #include "../base/common_write.h"
-#include <shadowhook.h>
+#include "../utils/npth_dl.h"
 #include <sstream>
 #include <string>
 
@@ -35,7 +35,7 @@ bool Stack::init(void* libartHandle) {
     }
 
     if (libartHandle != nullptr) {
-        sPrettyMethodCall = reinterpret_cast<PrettyMethod>(shadowhook_dlsym(libartHandle, ART_METHOD_PRETTY_METHOD));
+        sPrettyMethodCall = reinterpret_cast<PrettyMethod>(npth_dlsym(libartHandle, ART_METHOD_PRETTY_METHOD));
         sInited = sPrettyMethodCall != nullptr;
     }
 

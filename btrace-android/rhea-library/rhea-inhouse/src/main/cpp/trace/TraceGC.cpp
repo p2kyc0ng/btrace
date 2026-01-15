@@ -22,21 +22,11 @@
 
 namespace rheatrace {
 
-    //param3 is "bool only_one" on android 15+
-static void* proxyWaitForGcToCompleteLocked(void* heap_this,
-                                            void* cause,
-                                            void* self,
-                                            uint64_t param3,
-                                            uint64_t param4) {
+static void* proxyWaitForGcToCompleteLocked(void* proxy, void* cause, void* self) {
     SHADOWHOOK_STACK_SCOPE();
     uint64_t beginNano = current_boot_time_nanos();
     uint64_t beginCpuNano = current_thread_cpu_time_nanos();
-    void* result = SHADOWHOOK_CALL_PREV(proxyWaitForGcToCompleteLocked,
-                                        heap_this,
-                                        cause,
-                                        self,
-                                        param3,
-                                        param4);
+    void* result = SHADOWHOOK_CALL_PREV(proxyWaitForGcToCompleteLocked, proxy, cause, self);
     SamplingCollector::request(SamplingType::kGC, self, true, true, beginNano, beginCpuNano);
     return result;
 }
