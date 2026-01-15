@@ -18,11 +18,9 @@
 
 namespace {
 
-    //todo: direct reflect to "setHiddenApiExemptions" not work on some devices
-    //todo: replace with new impl
 static void free_java_reflections(JNIEnv *env) {
-    static const char *vmRuntime_class_name = "dalvik/system/VMRuntime";
-    jclass vmRuntime_class = env->FindClass(vmRuntime_class_name);
+    static const char *VMRuntime_class_name = "dalvik/system/VMRuntime";
+    jclass vmRuntime_class = env->FindClass(VMRuntime_class_name);
     void *getRuntime_art_method = env->GetStaticMethodID(vmRuntime_class,
                                                          "getRuntime",
                                                          "()Ldalvik/system/VMRuntime;");
