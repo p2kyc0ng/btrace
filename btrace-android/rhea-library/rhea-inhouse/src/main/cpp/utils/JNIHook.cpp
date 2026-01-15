@@ -26,8 +26,8 @@ static int jniEntranceIndex_ = -1;
 void init(JNIEnv* env, jobject foo, void* fooJNI) {
     void** fooArtMethod;
     if (android_get_device_api_level() >= 30) {
-        jclass Executable = env->FindClass("java/lang/reflect/Executable");
-        jfieldID artMethodField = env->GetFieldID(Executable, "artMethod", "J");
+        jclass executableClass = env->FindClass("java/lang/reflect/Executable");
+        jfieldID artMethodField = env->GetFieldID(executableClass, "artMethod", "J");
         fooArtMethod = (void**) env->GetLongField(foo, artMethodField);
     } else {
         fooArtMethod = (void**) env->FromReflectedMethod(foo);
@@ -47,8 +47,8 @@ static void hookJNIMethod(JNIEnv* env, jobject method, void* newEntrance, void**
     }
     void** targetArtMethod;
     if (android_get_device_api_level() >= 30) {
-        jclass Executable = env->FindClass("java/lang/reflect/Executable");
-        jfieldID artMethodField = env->GetFieldID(Executable, "artMethod", "J");
+        jclass executableClass = env->FindClass("java/lang/reflect/Executable");
+        jfieldID artMethodField = env->GetFieldID(executableClass, "artMethod", "J");
         targetArtMethod = (void**) env->GetLongField(method, artMethodField);
     } else {
         targetArtMethod = (void**) env->FromReflectedMethod(method);
@@ -77,8 +77,8 @@ hookJNIMethodId(JNIEnv* env, jclass cls, jmethodID methodId, bool isStatic, void
     void** targetArtMethod;
     if (android_get_device_api_level() >= 30) {
         auto method = env->ToReflectedMethod(cls, methodId, isStatic);
-        jclass Executable = env->FindClass("java/lang/reflect/Executable");
-        jfieldID artMethodField = env->GetFieldID(Executable, "artMethod", "J");
+        jclass executableClass = env->FindClass("java/lang/reflect/Executable");
+        jfieldID artMethodField = env->GetFieldID(executableClass, "artMethod", "J");
         targetArtMethod = (void**) env->GetLongField(method, artMethodField);
     } else {
         targetArtMethod = (void**) methodId;
@@ -125,8 +125,8 @@ void* getStaticEntrance(JNIEnv* env, const char* className, const char* methodNa
     void** targetArtMethod;
     if (android_get_device_api_level() >= 30) {
         auto method = env->ToReflectedMethod(cls, methodId, true);
-        jclass Executable = env->FindClass("java/lang/reflect/Executable");
-        jfieldID artMethodField = env->GetFieldID(Executable, "artMethod", "J");
+        jclass executableClass = env->FindClass("java/lang/reflect/Executable");
+        jfieldID artMethodField = env->GetFieldID(executableClass, "artMethod", "J");
         targetArtMethod = (void**) env->GetLongField(method, artMethodField);
     } else {
         targetArtMethod = (void**) methodId;

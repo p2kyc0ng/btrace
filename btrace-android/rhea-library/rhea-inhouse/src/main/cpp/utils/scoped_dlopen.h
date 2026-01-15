@@ -15,15 +15,14 @@
  */
 #pragma once
 
-
-#include "npth_dl.h"
+#include <shadowhook.h>
 
 namespace rheatrace {
 
 class ScopedDlopen {
 public:
     ScopedDlopen(const char *so_name) {
-        handler = npth_dlopen(so_name);
+        handler = shadowhook_dlopen(so_name);
     }
 
     ~ScopedDlopen() {
@@ -32,7 +31,7 @@ public:
 
     void release() {
         if (handler) {
-            npth_dlclose(handler);
+            shadowhook_dlclose(handler);
         }
         handler = nullptr;
     }

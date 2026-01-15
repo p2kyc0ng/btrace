@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 #include "StackVisitor.h"
-#include "../utils/npth_dl.h"
-
+#include <shadowhook.h>
 #include <string>
-
 
 namespace rheatrace {
 
@@ -54,22 +52,22 @@ bool StackVisitor::init() {
     if (sInited) {
         return true;
     }
-    auto *handle = npth_dlopen("libart.so");
+    auto *handle = shadowhook_dlopen("libart.so");
     if (handle == nullptr) {
         return false;
     }
-    sCurrentThreadCall = reinterpret_cast<CurrentThread>(npth_dlsym(handle, THREAD_CURRENT_FROM_GDB));
-    sConstructCall = reinterpret_cast<Construct>(npth_dlsym(handle, STACK_VISITOR_CTOR));
-    sDestructCall = reinterpret_cast<Destruct>(npth_dlsym(handle, STACK_VISITOR_DTOR));
-    sCreateContextCall = reinterpret_cast<CreateContext>(npth_dlsym(handle, CONTEXT_CREATE));
-    sGetMethodCall = reinterpret_cast<GetMethod>(npth_dlsym(handle, STACK_VISITOR_GET_METHOD));
-    sWalkStackCall = reinterpret_cast<WalkStack>(npth_dlsym(handle, STACK_VISITOR_WALK_STACK));
+    sCurrentThreadCall = reinterpret_cast<CurrentThread>(shadowhook_dlsym(handle, THREAD_CURRENT_FROM_GDB));
+    sConstructCall = reinterpret_cast<Construct>(shadowhook_dlsym(handle, STACK_VISITOR_CTOR));
+    sDestructCall = reinterpret_cast<Destruct>(shadowhook_dlsym(handle, STACK_VISITOR_DTOR));
+    sCreateContextCall = reinterpret_cast<CreateContext>(shadowhook_dlsym(handle, CONTEXT_CREATE));
+    sGetMethodCall = reinterpret_cast<GetMethod>(shadowhook_dlsym(handle, STACK_VISITOR_GET_METHOD));
+    sWalkStackCall = reinterpret_cast<WalkStack>(shadowhook_dlsym(handle, STACK_VISITOR_WALK_STACK));
 
     if (sConstructCall != nullptr && sCreateContextCall != nullptr && sGetMethodCall != nullptr && sWalkStackCall != nullptr) {
         sInited = Stack::init(handle);
     }
 
-    npth_dlclose(handle);
+    shadowhook_dlclose(handle);
 
     return sInited;
 }
