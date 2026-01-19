@@ -13,40 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma once
+package rhea.sample.android
 
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-#include "npth_dl.h"
-
-namespace rheatrace {
-
-class ScopedDlopen {
-public:
-    ScopedDlopen(const char *so_name) {
-        handler = npth_dlopen(so_name);
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class ExampleUnitTest {
+    @Test
+    fun addition_isCorrect() {
+        assertEquals(4, 2 + 2)
     }
-
-    ~ScopedDlopen() {
-        release();
-    }
-
-    void release() {
-        if (handler) {
-            npth_dlclose(handler);
-        }
-        handler = nullptr;
-    }
-
-    void *get() const {
-        return handler;
-    }
-
-private:
-    void *handler;
-
-    ScopedDlopen(const ScopedDlopen &) = delete;
-
-    void operator=(const ScopedDlopen &) = delete;
-};
-
 }

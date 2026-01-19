@@ -20,6 +20,7 @@
 #include "checkpoint.h"
 #include <stdint.h>
 #include <shadowhook.h>
+#include "../../utils/npth_dl.h"
 #include "java_alloc_common.h"
 #include "../../RheaContext.h"
 #include "../../utils/log.h"
@@ -52,10 +53,10 @@ size_t run_checkpoint(void *closure) {
 
 bool init_checkpoint(void* lib) {
 
-    ThreadList_RunCheckpointFunc = (ThreadList_RunCheckpoint_) shadowhook_dlsym(lib,
+    ThreadList_RunCheckpointFunc = (ThreadList_RunCheckpoint_) npth_dlsym(lib,
                                                                                  ThreadList_RUN_CHECKPOINT);
     if(ThreadList_RunCheckpointFunc == nullptr) {
-        ThreadList_RunCheckpointFunc_15 = (ThreadList_RunCheckpoint_15_) shadowhook_dlsym(lib,
+        ThreadList_RunCheckpointFunc_15 = (ThreadList_RunCheckpoint_15_) npth_dlsym(lib,
                                                                                      ThreadList_RUN_CHECKPOINT_15);
     }
     if (ThreadList_RunCheckpointFunc == nullptr && ThreadList_RunCheckpointFunc_15 == nullptr) {

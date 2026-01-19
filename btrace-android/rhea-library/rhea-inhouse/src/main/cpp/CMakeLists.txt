@@ -19,6 +19,7 @@ set(RHEA_SRCS
         trace/java_alloc/thread_list.cpp
         trace/java_alloc/TraceJavaAlloc.cpp
         utils/JNIHook.cpp
+        utils/npth_dl.c
         TraceGlobalJni.cpp
         TraceAbilityJni.cpp
         RheaOnLoad.cpp
